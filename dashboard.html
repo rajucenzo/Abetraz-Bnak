@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abetraz Dashboard</title>
+  <link rel="stylesheet" href="dashboardstyle.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css " rel="stylesheet">
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <img src="abetraz-logo.gif" alt="Abetraz Logo">
+        <h2>Abetraz</h2>
+      </div>
+      <ul class="sidebar-menu">
+        <li><i class="fas fa-chart-line"></i> Dashboard</li>
+        <li><i class="fas fa-user"></i> Profile</li>
+        <li><i class="fas fa-wallet"></i> My Wallet</li>
+        <li><i class="fas fa-exchange-alt"></i> Transactions</li>
+        <li><i class="fas fa-credit-card"></i> Cards</li>
+        <li><i class="fas fa-cog"></i> Settings</li>
+        <li onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="main-header">
+        <div class="user-info">
+          <span>Welcome, <strong id="user-name">User</strong></span>
+        </div>
+      </header>
+
+      <section class="widgets">
+        <div class="widget">
+          <h3>Account Balance</h3>
+          <p id="balance">₹10,000.00</p>
+        </div>
+        <div class="widget">
+          <h3>Account Number</h3>
+          <p id="account-number">12345678</p>
+        </div>
+        <div class="widget">
+          <h3>Quick Actions</h3>
+          <button class="action-btn" onclick="alert('Send Money')">Send</button>
+          <button class="action-btn" onclick="alert('Receive Money')">Receive</button>
+          <button class="action-btn" onclick="alert('Buy NFT')">Buy NFT</button>
+        </div>
+      </section>
+
+      <section class="analytics trading-box" onclick="window.location.href='trading.html'">
+        <h3>Virtual Trading & Learning</h3>
+        <p>Learn how to trade and manage wealth safely in a virtual environment. Explore simulations, videos, and guided challenges.</p>
+      </section>
+    </main>
+  </div>
+
+  <!-- Fixed JavaScript -->
+  <script>
+    // Get URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const accountNumber = urlParams.get('account');
+
+    // Check if accountNumber is valid and exists in localStorage
+    if (!accountNumber || !localStorage.getItem(accountNumber)) {
+      alert("Please log in to access the dashboard.");
+      window.location.href = "login.html";
+    } else {
+      // Load user data
+      const userData = JSON.parse(localStorage.getItem(accountNumber));
+      document.getElementById("user-name").textContent = userData.name;
+      document.getElementById("account-number").textContent = userData.accountNumber;
+
+      // user account balance
+      document.getElementById("balance").textContent = `₹${userData.balance}.00`;
+    }
+
+    function logout() {
+  window.location.href = "login.html";
+}
+  </script>
+</body>
+</html>

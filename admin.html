@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abetraz Admin Panel</title>
+  <link rel="stylesheet" href="adminstyle.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="admin-container">
+    <aside class="admin-sidebar">
+      <div class="logo">
+        <img src="abetraz-logo.gif" alt="Logo">
+        <h2>Admin Panel</h2>
+      </div>
+      <ul class="admin-menu">
+        <li><i class="fas fa-users"></i> Users</li>
+        <li><i class="fas fa-money-bill-wave"></i> Transactions</li>
+        <li><i class="fas fa-shield-alt"></i> Security</li>
+        <li><i class="fas fa-wrench"></i> Settings</li>
+        <li><button class="btn-send-money" onclick="openModal()"><i class="fas fa-paper-plane"></i> Send Money</button></li>
+        <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+      </ul>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-header">
+        <h1>Registered Users</h1>
+      </header>
+
+      <section class="admin-table-section">
+        <table id="userTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Account No</th>
+              <th>Password</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="userTableBody">
+            <!-- Users loaded dynamically -->
+          </tbody>
+        </table>
+      </section>
+
+      <footer class="admin-footer">
+        <p>© 2025 Abetraz Bank Admin Panel</p>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Send Money Modal -->
+  <div id="sendMoneyModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2>Send Money</h2>
+      <form id="sendMoneyForm">
+        <label for="adminId">Admin ID</label>
+        <input type="text" id="adminId" placeholder="Enter Admin ID" required>
+
+        <label for="recipientAcc">Customer Account Number</label>
+        <input type="text" id="recipientAcc" placeholder="Enter Account Number" required>
+
+        <label for="amount">Amount</label>
+        <input type="number" id="amount" placeholder="Enter Amount" required>
+
+        <button type="submit">Send</button>
+      </form>
+      <p id="sendStatus" class="send-status"></p>
+    </div>
+  </div>
+
+  <script>
+    const tbody = document.getElementById("userTableBody");
+    const VALID_ADMIN_ID = "rajucenzo";
+
+    function renderUserList() {
+      tbody.innerHTML = "";
+      let count = 1;
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const data = JSON.parse(localStorage.getItem(key));
+        if (data && data.email) {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${count++}</td>
+            <td>${data.name}</td>
+            <td>${data.email}</td>
+            <td>${data.accountNumber}</td>
+            <td>${data.password}</td>
+            <td class="${data.status === 'active' ? 'status-active' : 'status-frozen'}">
+              ${data.status}
+            </td>
+            <td>
+              <button class="btn-freeze" onclick='toggleStatus("${key}")'>
+                ${data.status === 'active' ? 'Freeze' : 'Activate'}
+              </button>
+              <button class="btn-delete" onclick='deleteUser("${key}")'>Delete</button>
+            </td>`;
+          tbody.appendChild(row);
+        }
+      }
+      if (localStorage.length === 0 || count === 1) {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td colspan="7" style="text-align:center">No users found.</td>`;
+        tbody.appendChild(row);
+      }
+    }
+
+    function toggleStatus(email) {
+      const data = JSON.parse(localStorage.getItem(email));
+      data.status = data.status === 'active' ? 'frozen' : 'active';
+      localStorage.setItem(email, JSON.stringify(data));
+      renderUserList();
+    }
+
+    function deleteUser(email) {
+      if (confirm("Are you sure to delete this user?")) {
+        localStorage.removeItem(email);
+        renderUserList();
+      }
+    }
+
+    function openModal() {
+      document.getElementById("sendMoneyModal").style.display = "block";
+    }
+
+    function closeModal() {
+      document.getElementById("sendMoneyModal").style.display = "none";
+      document.getElementById("sendMoneyForm").reset();
+      document.getElementById("sendStatus").textContent = "";
+    }
+
+    document.getElementById("sendMoneyForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const adminId = document.getElementById("adminId").value.trim();
+      const accNo = document.getElementById("recipientAcc").value.trim();
+      const amount = parseFloat(document.getElementById("amount").value.trim());
+      const statusEl = document.getElementById("sendStatus");
+
+      if (adminId !== VALID_ADMIN_ID) {
+        statusEl.style.color = "red";
+        statusEl.textContent = "Incorrect Admin ID.";
+        return;
+      }
+
+      const userData = JSON.parse(localStorage.getItem(accNo));
+
+      if (!userData) {
+        statusEl.style.color = "red";
+        statusEl.textContent = "Customer account not found.";
+        return;
+      }
+
+      if (userData.status === 'frozen') {
+        statusEl.style.color = "red";
+        statusEl.textContent = "Account is frozen. Cannot send money.";
+        return;
+      }
+
+      if (isNaN(amount) || amount <= 0) {
+        statusEl.style.color = "red";
+        statusEl.textContent = "Please enter a valid amount.";
+        return;
+      }
+
+      userData.balance = (userData.balance || 100) + amount;
+      localStorage.setItem(accNo, JSON.stringify(userData));
+
+      statusEl.style.color = "lime";
+      statusEl.textContent = `₹${amount} successfully sent to ${accNo}`;
+
+      setTimeout(closeModal, 2000);
+    });
+
+    window.onload = renderUserList;
+  </script>
+</body>
+</html>

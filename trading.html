@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Abetrz Trader - Demo Trade</title>
+  <link rel="stylesheet" href="tradingstyle.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial"></script>
+</head>
+<body>
+  <header class="header">
+    <div class="logo">Abetrz Trader</div>
+    <div class="balance-box">Balance: $<span id="accountBalance">10000</span></div>
+    <nav class="nav-links">
+      <a href="#">Trade</a>
+      <a href="#">Support</a>
+      <a href="#">Account</a>
+      <a href="#">Tournaments</a>
+      <a href="#">Market</a>
+      <a href="#">More</a>
+    </nav>
+  </header>
+
+  <!-- Currency Bar -->
+  <div class="currency-bar">
+    <span>BTC</span><span>ETH</span><span>ADA</span><span>SOL</span><span>DOT</span><span>XRP</span><span>MATIC</span><span>LTC</span><span>BNB</span><span>TRX</span>
+  </div>
+
+  <main class="main-content">
+    <div class="graph-area">
+      <select id="chartTypeSelect">
+        <option value="line">Line Chart</option>
+        <option value="candlestick">Candlestick Chart</option>
+      </select>
+      <canvas id="liveGraph" height="120"></canvas>
+    </div>
+
+    <div class="trade-form-area">
+      <form id="tradeForm">
+        <label>Investment Amount:</label>
+        <input type="number" id="investmentAmount" min="1" value="100" required />
+
+        <label>Direction:</label>
+        <select id="tradeDirection">
+          <option value="call">Call (Up)</option>
+          <option value="put">Put (Down)</option>
+        </select>
+
+        <label>Trade Time:</label>
+        <select id="tradeTime">
+          <option value="5">5 Seconds</option>
+          <option value="10">10 Seconds</option>
+          <option value="15">15 Seconds</option>
+          <option value="30">30 Seconds</option>
+        </select>
+
+        <button type="submit">Place Trade</button>
+      </form>
+
+      <div class="trade-history">
+        <h3>Trade History</h3>
+        <ul id="tradeHistory"></ul>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 QxBroker. All rights reserved.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

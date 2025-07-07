@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Abetraz Bank - Log In</title>
+  <link rel="stylesheet" href="loginstyle.css">
+</head>
+<body>
+
+  <!-- Login Container -->
+  <div class="login-container">
+    <div class="login-form">
+      <h1>Abetraz Banks</h1>
+      <h2>Log In to Your Account</h2>
+      <p style="text-align:center;">Welcome back! Enter your credentials to log in.</p>
+
+      <form id="loginForm">
+        <label for="Account Number">Acount Number:</label>
+        <input type="text" id="account-number" placeholder="Enter your Account Number">
+        <label for="password">Password:</label>
+        <input type="password" id="password" placeholder="Enter your password" required>
+
+        <!-- Submit Button -->
+        <button type="submit" class="login-btn">Log In</button>
+      </form>
+
+      <div id="message"></div>
+    </div>
+    <div class="login-background">
+      <img src="abetraz-signup-bg.png" alt="Abetraz Bank Logo" class="login-image">
+    </div>
+  </div>
+
+  <!-- Success Popup -->
+  <div id="successPopup" class="popup hide">You have successfully logged in!</div>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const accNo = document.getElementById("account-number").value;
+      const password = document.getElementById("password").value.trim();
+
+      const messageDiv = document.getElementById("message");
+
+      // Check if user exists in localStorage
+      if (!localStorage.getItem(accNo)) {
+        messageDiv.className = "error-message";
+        messageDiv.textContent = "Account not found. Please check your account number.";
+        return;
+      }
+
+      // Extract user data
+      const userData = JSON.parse(localStorage.getItem(accNo));
+
+      // Validate password
+      if (userData.password !== password) {
+        messageDiv.className = "error-message";
+        messageDiv.textContent = "Incorrect password. Please try again.";
+        return;
+      }
+
+      // Show success popup
+      const loginSuccessPopup = document.createElement('div');
+      loginSuccessPopup.className = 'popup';
+      loginSuccessPopup.textContent = 'You have successfully logged in!';
+      document.body.appendChild(loginSuccessPopup);
+
+      // Redirect after delay
+      setTimeout(() => {
+      window.location.href = "dashboard.html?account=" + accNo;
+      }, 2000);
+    });
+  </script>
+
+</body>
+</html>

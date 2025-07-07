@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Abetraz Bank - Sign Up</title>
+  <link rel="stylesheet" href="singupstyle.css">
+</head>
+<body>
+
+  <!-- Signup Container -->
+  <div class="signup-container">
+    <div class="signup-form">
+      <h2>Create Your Free Account</h2>
+      <p style="text-align:center;">Start learning real banking skills today.</p>
+
+      <form id="signupForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" placeholder="Full name" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" placeholder="Enter your email" required>
+
+        <label for="username">Username:</label>
+        <input type="text" id="username" placeholder="Choose a username" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" placeholder="Create a password" required>
+
+        <label for="dob">Date of Birth (Optional):</label>
+        <input type="date" id="dob">
+
+        <!-- Generate Account Number Button -->
+        <button type="button" class="generate-btn" onclick="generateAccountNumber()">Generate Account Number</button>
+
+        <!-- Display Generated Account Number -->
+        <div id="accountNumber" class="account-number"></div>
+
+        <!-- Disclaimer -->
+        <div class="disclaimer">
+          Kindly save or write down your account number, as it will be needed to log in.
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="signup-btn">Create Account</button>
+      </form>
+
+      <div id="message"></div>
+    </div>
+    <div class="signup-background">
+      <img src="abetraz-signup-bg.png" alt="Abetraz Bank Logo" class="signup-image">
+    </div>
+  </div>
+
+  <!-- Success Popup -->
+  <div id="successPopup" class="popup hide">Your account number has been generated successfully!</div>
+
+  <script>
+    // Function to generate a random 8-digit account number
+    function generateAccountNumber() {
+      let accountNumber = '';
+      for (let i = 0; i < 8; i++) {
+        accountNumber += Math.floor(Math.random() * 10); // Random digit from 0 to 9
+      }
+      const accountNumberDiv = document.getElementById("accountNumber");
+      accountNumberDiv.textContent = "Your Account Number: " + accountNumber;
+      accountNumberDiv.style.display = "block";
+
+      // Show success popup
+      const popup = document.getElementById("successPopup");
+      popup.classList.remove("hide");
+      popup.style.opacity = 1;
+
+      // Hide popup after 2 seconds
+      setTimeout(() => {
+        popup.classList.add("hide");
+      }, 2000);
+    }
+
+    document.getElementById("signupForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const dob = document.getElementById("dob").value;
+
+      const messageDiv = document.getElementById("message");
+      const accountNumberDiv = document.getElementById("accountNumber");
+
+      // Check if account number is generated
+      if (!accountNumberDiv.textContent.includes(":")) {
+        messageDiv.className = "error-message";
+        messageDiv.textContent = "Please generate an account number first.";
+        return;
+      }
+
+      // Check if user already exists
+      if (localStorage.getItem(email)) {
+        messageDiv.className = "error-message";
+        messageDiv.textContent = "An account with this email already exists.";
+        return;
+      }
+
+      // Extract account number
+      const accountNumber = accountNumberDiv.textContent.split(":")[1].trim();
+
+      // Save user data as JSON
+      const userData = {
+      name: name,
+      email: email,
+      username: username,
+      password: password,
+      dob: dob,
+      accountNumber: accountNumber,
+      status: "active",
+      balance: 100
+     };
+
+
+      localStorage.setItem(email, JSON.stringify(userData)); 
+      localStorage.setItem(accountNumber, JSON.stringify(userData));
+
+      // Show success popup
+      const signupSuccessPopup = document.createElement('div');
+      signupSuccessPopup.className = 'popup';
+      signupSuccessPopup.textContent = 'You are signed up successfully!';
+      document.body.appendChild(signupSuccessPopup);
+
+      // Redirect after delay
+      setTimeout(() => {
+        window.location.href = "login.html";
+      }, 2000);
+    });
+  </script>
+
+</body>
+</html>
